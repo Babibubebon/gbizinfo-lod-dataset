@@ -58,9 +58,7 @@ jobs:
         if: github.event.inputs.version == ''
       - name: Set artifact_run_id from inputs
         run: echo "artifact_run_id=${{ github.event.inputs.run_id }}" >> $GITHUB_ENV
-        if: github.event.inputs.version != ''
-      - name: Install pigz
-        run: sudo apt-get update && sudo apt-get install -y pigz && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
+        if: github.event.inputs.version != '’
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -74,7 +72,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ env.artifact_run_id }}
       - name: Convert CSV files to RDF
-        run: mkdir -p rdf && gbilod convert -f nq -p 3 -c -o rdf .
+        run: mkdir -p rdf && gbilod convert -f nq -p 4 -c -o rdf . && rm -f *.csv
       - name: Count triples
         run: |
           for F in *.nq.gz; do echo "- $F: $(printf "%'d" $(pigz -dc -f < "$F" | wc -l)) quads" >> summary.txt ; done
@@ -82,9 +80,9 @@ jobs:
       - name: Split large files
         run: |
           pigz -dc hojin.nq.gz | split -C 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "hojin.part" \
-          && hojin.nq.gz \
+          && rm hojin.nq.gz \
           && pigz -dc tokkyo.nq.gz | split -C 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "tokkyo.part" \
-          && tokkyo.nq.gz \
+          && rm tokkyo.nq.gz
         working-directory: ./rdf
       - name: Release
         uses: softprops/action-gh-release@v2
