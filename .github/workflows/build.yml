@@ -60,9 +60,9 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: $version
+          name: ${{ env.version }}
       - name: Convert CSV files to RDF
-        run: mkdir -p rdf && gbilod convert -f nq -p 2 -c -o rdf .
+        run: mkdir -p rdf && gbilod convert -f nq -p 3 -c -o rdf .
       - name: Count triples
         run: |
           for F in *.nq.gz; do echo "- $F: $(printf "%'d" $(pigz -dc -f < "$F" | wc -l)) quads" >> summary.txt ; done
@@ -77,6 +77,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          name: $version
+          name: ${{ env.version }}
           files: ./rdf/*.nq.gz
           body_path: ./rdf/summary.txt
