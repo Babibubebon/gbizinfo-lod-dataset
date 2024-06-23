@@ -12,7 +12,7 @@ on:
       run_id:
         description: run_id of the uploaded artifact
         required: false
-        type: number
+        type: string
 
 jobs:
   download:
@@ -71,6 +71,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.version }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ env.artifact_run_id }}
       - name: Convert CSV files to RDF
         run: mkdir -p rdf && gbilod convert -f nq -p 3 -c -o rdf .
