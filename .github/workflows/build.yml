@@ -58,7 +58,7 @@ jobs:
         if: github.event.inputs.version == ''
       - name: Set artifact_run_id from inputs
         run: echo "artifact_run_id=${{ github.event.inputs.run_id }}" >> $GITHUB_ENV
-        if: github.event.inputs.version != '’
+        if: github.event.inputs.version != ''
       - name: Install Python
         uses: actions/setup-python@v5
         with:
