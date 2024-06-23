@@ -56,9 +56,9 @@ jobs:
         working-directory: ./rdf
       - name: Split large files
         run: |
-          pigz -dc hojin.nq.gz | split -b 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "hojin.part" \
+          pigz -dc hojin.nq.gz | split -C 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "hojin.part" \
           && hojin.nq.gz \
-          && pigz -dc tokkyo.nq.gz | split -b 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "tokkyo.part" \
+          && pigz -dc tokkyo.nq.gz | split -C 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "tokkyo.part" \
           && tokkyo.nq.gz \
         working-directory: ./rdf
       - name: Release
