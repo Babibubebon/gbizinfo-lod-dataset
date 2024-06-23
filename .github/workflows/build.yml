@@ -9,6 +9,10 @@ on:
         description: version to be built
         required: false
         type: string
+      run_id:
+        description: run_id of the uploaded artifact
+        required: false
+        type: number
 
 jobs:
   download:
@@ -49,6 +53,12 @@ jobs:
       - name: Set version from inputs
         run: echo "version=${{ github.event.inputs.version }}" >> $GITHUB_ENV
         if: github.event.inputs.version != ''
+      - name: Set artifact_run_id
+        run: echo "artifact_run_id=${{ github.run_id }}" >> $GITHUB_ENV
+        if: github.event.inputs.version == ''
+      - name: Set artifact_run_id from inputs
+        run: echo "artifact_run_id=${{ github.event.inputs.run_id }}" >> $GITHUB_ENV
+        if: github.event.inputs.version != ''
       - name: Install pigz
         run: sudo apt-get update && sudo apt-get install -y pigz && sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/*
       - name: Install Python
@@ -61,6 +71,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.version }}
+          run-id: ${{ env.artifact_run_id }}
       - name: Convert CSV files to RDF
         run: mkdir -p rdf && gbilod convert -f nq -p 3 -c -o rdf .
       - name: Count triples
