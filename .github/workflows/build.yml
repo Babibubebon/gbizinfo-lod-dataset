@@ -1,0 +1,41 @@
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+
+jobs:
+  build:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - run: df -hT
+      - run: echo "version=v$(date +%Y%m%d)" >> $GITHUB_ENV
+      - name: Install pigz
+        run: sudo apt-get update && sudo apt-get install -y pigz
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install gbizinfo-lod
+        run: pip install gbizinfo-lod
+      - name: Download CSV files
+        run: gbilod download . && rm Kihonjoho_UTF-8.csv
+      - name: Convert CSV files to RDF
+        run: mkdir -p rdf && gbilod convert -f nq -c -o rdf .
+      - name: Count triples
+        run: |
+          for F in *.nq.gz; do echo "- $F: $(printf "%'d" $(pigz -dc -f < "$F" | wc -l)) quads" >> summary.txt ; done
+        working-directory: ./rdf
+      - name: Split large files
+        run: |
+          pigz -dc hojin.nq.gz | split -b 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "hojin.part" \
+          && hojin.nq.gz \
+          && pigz -dc tokkyo.nq.gz | split -b 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "tokkyo.part" \
+          && tokkyo.nq.gz \
+        working-directory: ./rdf
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: $version
+          files: ./rdf/*.nq.gz
+          body_path: ./rdf/summary.txt
