@@ -59,18 +59,8 @@ jobs:
       - name: Set artifact_run_id from inputs
         run: echo "artifact_run_id=${{ github.event.inputs.run_id }}" >> $GITHUB_ENV
         if: github.event.inputs.version != ''
-      - uses: actions/checkout@v4
-      - run: |
-          git tag $version
-          git push origin $version
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: ${{ env.version }}
-          tag_name: ${{ env.version }}
-          files: README.md
-          body_path: README.md
-
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -84,7 +74,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ env.artifact_run_id }}
       - name: Convert CSV files to RDF
-        run: mkdir -p rdf && gbilod convert -f nq -p 4 -c -o rdf . && rm -f *.csv
+        run: mkdir -p rdf && gbilod convert -f nq -p 3 -c -o rdf . && rm -f *.csv
       - name: Count triples
         run: |
           for F in *.nq.gz; do echo "- $F: $(printf "%'d" $(pigz -dc -f < "$F" | wc -l)) quads" >> summary.txt ; done
@@ -96,7 +86,8 @@ jobs:
           && pigz -dc tokkyo.nq.gz | split -C 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "tokkyo.part" \
           && rm tokkyo.nq.gz
         working-directory: ./rdf
-      - run: |
+      - name: Create tag
+        run: |
           git tag $version
           git push origin $version
       - name: Release
