@@ -84,9 +84,13 @@ jobs:
           && pigz -dc tokkyo.nq.gz | split -C 20G -a 1 -d --verbose --filter="pigz -9 > \$FILE.nq.gz" - "tokkyo.part" \
           && rm tokkyo.nq.gz
         working-directory: ./rdf
+      - run: |
+          git tag $version
+          git push origin $version
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ env.version }}
+          tag_name: ${{ env.version }}
           files: ./rdf/*.nq.gz
           body_path: ./rdf/summary.txt
