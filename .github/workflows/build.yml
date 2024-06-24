@@ -59,6 +59,18 @@ jobs:
       - name: Set artifact_run_id from inputs
         run: echo "artifact_run_id=${{ github.event.inputs.run_id }}" >> $GITHUB_ENV
         if: github.event.inputs.version != ''
+      - uses: actions/checkout@v4
+      - run: |
+          git tag $version
+          git push origin $version
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ env.version }}
+          tag_name: ${{ env.version }}
+          files: README.md
+          body_path: README.md
+
       - name: Install Python
         uses: actions/setup-python@v5
         with:
