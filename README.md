@@ -20,3 +20,7 @@ gzip圧縮されたN-Quads形式のRDFデータセット
 - 財務情報: `zaimu.nq.gz`
 
 [リリースのファイルサイズ制限](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases#storage-and-bandwidth-quotas)のため、それぞれファイルサイズが2GiB以上となる場合は `{basename}.part0.nq.gz`, `{basename}.part1.nq.gz` ... のようなファイル名で複数ファイルに分割される。
+
+## License
+
+「[gBizINFO](https://info.gbiz.go.jp/)」（経済産業省）より取得したCSVファイルを加工して作成したもので、[経済産業省 利用規約](https://www.meti.go.jp/main/rules.html)に従い利用するものである。
