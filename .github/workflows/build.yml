@@ -91,7 +91,7 @@ jobs:
           git tag $version
           git push origin $version
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.0.6
         with:
           name: ${{ env.version }}
           tag_name: ${{ env.version }}
