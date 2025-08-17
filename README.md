@@ -4,7 +4,8 @@
 
 [gbizinfo-lod](https://github.com/Babibubebon/gbizinfo-lod) を用いて生成したデータセット公開用リポジトリ
 
-GitHub Actionsを利用して毎週自動生成され、[Releases](https://github.com/Babibubebon/gbizinfo-lod-dataset/releases)からダウンロードできる。
+~~GitHub Actionsを利用して毎週自動生成され、~~ [Releases](https://github.com/Babibubebon/gbizinfo-lod-dataset/releases)からダウンロードできる。
+=> 2025年6月末をもって[現行gBizINFOのデータ更新が凍結](https://info.gbiz.go.jp/html/R7Infomation.html)されたため、本データセットの自動生成も停止しています。
 
 ## 生成ファイル
 
